@@ -1,4 +1,3 @@
-import {Link} from 'react-router-dom';
 import Sidebar from './Sidebar';
 
 function ProfileSetting(){
@@ -25,9 +24,21 @@ function ProfileSetting(){
                         </div>
                     </div>
                     <div className="mb-3 row">
+                        <label for="inputPassword" className="col-sm-2 col-form-label">Profile photo</label>
+                        <div className="col-sm-10">
+                            <input type="file" className="form-control" id="inputPassword"/>
+                        </div>
+                    </div>
+                    <div className="mb-3 row">
                         <label for="inputPassword" className="col-sm-2 col-form-label">Password</label>
                         <div className="col-sm-10">
                             <input type="password" className="form-control" id="inputPassword"/>
+                        </div>
+                    </div>
+                    <div className="mb-3 row">
+                        <label for="inputPassword" className="col-sm-2 col-form-label">Interest</label>
+                        <div className="col-sm-10">
+                            <input type="text" className="form-control" id="inputPassword"/>
                         </div>
                     </div>
                     <hr/>

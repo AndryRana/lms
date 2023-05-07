@@ -28,7 +28,7 @@ function Register(){
                                 <div className="mb-3">
                                     <label for="exampleInputPassword1" className="form-label">Interests</label>
                                     <textarea className= "form-control"></textarea>
-                                    <div id="emailHelp" class="form-text">PHP, Python, JavaScript</div>
+                                    <div id="emailHelp" className="form-text">PHP, Python, JavaScript</div>
                                 </div>
                                 <button type="submit" className="btn btn-primary">Register</button>
                             </form>

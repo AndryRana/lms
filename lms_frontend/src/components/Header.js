@@ -1,6 +1,7 @@
 import {Link} from 'react-router-dom';
 
 function Header() {
+    const teacherLoginStatus =localStorage.getItem('teacherLoginStatus')
     return (
         <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
                 <div className="container">
@@ -26,14 +27,25 @@ function Header() {
                                 </Link>
                             </li>
                             <li className="nav-item">
-                                <a className="nav-link active" aria-current="page" href="#">
+                                <Link className="nav-link active" aria-current="page" to="/all-courses">
                                     Courses
-                                </a>
+                                </Link>
                             </li>
-                            <li className="nav-item">
-                                <a className="nav-link" href="#">
-                                    Teachers
+                            <li className="nav-item dropdown">
+                                <a className="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Teacher
                                 </a>
+                                <ul className="dropdown-menu" aria-labelledby="navbarDropdown">
+                                    {teacherLoginStatus!=='true' && 
+                                        <>
+                                        <li><Link className="dropdown-item" to="/teacher-login">Login</Link></li>
+                                        <li ><Link className="dropdown-item" to="/teacher-register">Register</Link></li>
+                                        </>
+                                    }
+                                    <li><hr className="dropdown-divider"/></li>
+                                    <li><Link className="dropdown-item" to="/teacher-dashboard">Dashbord</Link></li>
+                                    <li><Link className="dropdown-item" to="/teacher-logout">Logout</Link></li>
+                                </ul>
                             </li>
                             <li className="nav-item dropdown">
                                 <a className="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -44,7 +56,7 @@ function Header() {
                                     <li ><Link className="dropdown-item" to="/user-register">Register</Link></li>
                                     <li><hr className="dropdown-divider"/></li>
                                     <li><Link className="dropdown-item" to="/user-dashboard">Dashbord</Link></li>
-                                    <li><a className="dropdown-item" href="#">Logout</a></li>
+                                    <li><Link className="dropdown-item" href="/user-logout">Logout</Link></li>
                                 </ul>
                             </li>
                         </ul>

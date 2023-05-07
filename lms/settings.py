@@ -33,6 +33,7 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'mainlms',
+    'corsheaders',
     'rest_framework',
     'rest_framework.authtoken',
     'django.contrib.admin',
@@ -46,6 +47,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -132,6 +134,13 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+CORS_ALLOW_ALL_ORIGINS=True
+# CORS_ALLOWED_ORIGINS=[
+#     'http://localhost:3000/'
+# ]
+
+MEDIA_URL='/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR,'media')
 
 # Email Server
 EMAIL_HOST = os.environ.get('EMAIL_HOST')

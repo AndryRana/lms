@@ -10,7 +10,7 @@ function RecommendedCourses(){
                 </aside>
                 <section className="col-md-9" >
                     <div className="card">
-                        <h5 class="car-header">Recommended courses</h5>
+                        <h5 className="car-header">Recommended courses</h5>
                         <div className="card-body">
                             <table className="table table-bordered">
                                 <thead>
@@ -21,11 +21,13 @@ function RecommendedCourses(){
                                     </tr>
                                 </thead>
                                 <tbody>
+                                <tr>
                                     <td>Php Dev</td>
                                     <td> <Link to="/"> Andry</Link></td>
                                     <td>
                                         <button className="btn btn-danger btn-sm active">Delete</button>
                                     </td>
+                                </tr>
                                 </tbody>
                             </table>
                         </div>
