@@ -5,6 +5,7 @@ import TeacherDetail from './TeacherDetail';
 
 //  Users
 import Login from './User/Login';
+import Logout from './User/StudentLogout';
 import Register from './User/Register';
 import Dashboard from './User/Dashboard';
 import FavoriteCourses from './User/FavoriteCourses';
@@ -19,6 +20,7 @@ import TeacherLogin from './Teacher/TeacherLogin';
 import TeacherLogout from './Teacher/TeacherLogout';
 import TeacherRegister from './Teacher/TeacherRegister';
 import TeacherCourses from './Teacher/TeacherCourses';
+import EnrolledStudents from './Teacher/EnrolledStudents';
 import AddCourse from './Teacher/AddCourse';
 import EditCourse from './Teacher/EditCourse';
 import AddChapter from './Teacher/AddChapter';
@@ -33,6 +35,7 @@ import AllCourses from './AllCourses';
 import PopularCourses from './PopularCourses';
 import PopularTeachers from './PopularTeachers';
 import CategoryCourses from './CategoryCourses';
+import TeacherSkillCourses from './TeacherSkillCourses';
 
 import About from './About';
 import Footer from './Footer';
@@ -48,6 +51,7 @@ function Main(){
             <Route path="/about" element={<About />}/>
             <Route path="/detail/:course_id" element={<CourseDetail />}/>
             <Route path="/user-login" element={<Login />}/>
+            <Route path="/user-logout" element={<Logout />}/>
             <Route path="/user-register" element={<Register />}/>
             <Route path="/user-dashboard" element={<Dashboard />}/>
             <Route path="/my-courses" element={<MyCourses />}/>
@@ -60,6 +64,7 @@ function Main(){
             <Route path="/teacher-register" element={<TeacherRegister />}/>
             <Route path="/teacher-dashboard" element={<TeacherDashboard />}/>
             <Route path="/teacher-courses" element={<TeacherCourses />}/>
+            <Route path="/enrolled-students/:course_id" element={<EnrolledStudents />}/>
             <Route path="/add-course" element={<AddCourse />}/>
             <Route path="/edit-course/:course_id" element={<EditCourse />}/>
             <Route path="/add-chapter/:course_id" element={<AddChapter />}/>
@@ -73,6 +78,7 @@ function Main(){
             <Route path="/popular-courses" element={<PopularCourses />}/>
             <Route path="/popular-teachers" element={<PopularTeachers />}/>
             <Route path="/category/:category_slug" element={<CategoryCourses />}/>
+            <Route path="/teacher-skill-courses/:skill_name/:teacher_id" element={<TeacherSkillCourses />}/>
         </Switch>
         <Footer />
     </div>

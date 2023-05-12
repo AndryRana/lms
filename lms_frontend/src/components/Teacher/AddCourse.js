@@ -1,6 +1,8 @@
 import TeacherSidebar from './TeacherSidebar';
 import {useState, useEffect} from 'react';
 import axios from "axios";
+import Swal from 'sweetalert2';
+
 const baseUrl='http://127.0.0.1:8000/api';
 function AddCourse(){
     const [cats, setCats]=useState([]);
@@ -38,10 +40,11 @@ function AddCourse(){
         });
     }
     const formSubmit=(event)=>{
+        const teacherId =localStorage.getItem('teacherId');
         event.preventDefault();
         const _formData=new FormData();
         _formData.append('category', courseData.category);
-        _formData.append('teacher', 1);
+        _formData.append('teacher', teacherId);
         _formData.append('title', courseData.title);
         _formData.append('description', courseData.description);
         _formData.append('feature_img', courseData.f_img,courseData.f_img.name);
@@ -53,8 +56,18 @@ function AddCourse(){
                 }
             })
             .then((res)=>{
-                // console.log(res.data);
-                window.location.href='/add-course';
+                if(res.status ===200 || res.status===201) {
+                    Swal.fire({
+                        title: 'Data has been added!',
+                        icon: 'success',
+                        toast:true,
+                        timer:3000,
+                        position:'top-right',
+                        timerProgressBar:true,
+                        showConfirmButton:false
+                    });
+                    window.location.reload();
+                }
             });
 
         } catch (error) {

@@ -4,6 +4,7 @@ import axios from "axios";
 const baseUrl='http://127.0.0.1:8000/api';
 function AllCourses() {
     const [courseData,setCourseData] = useState([])
+    
     // fetch courses when page load
     useEffect(()=>{
         try {

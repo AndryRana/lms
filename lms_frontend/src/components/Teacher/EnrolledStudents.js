@@ -1,16 +1,17 @@
-import {useParams} from 'react-router-dom';
+import {Link, useParams} from 'react-router-dom';
 import TeacherSidebar from './TeacherSidebar';
 import {useState, useEffect} from 'react';
 import axios from "axios";
 const baseUrl='http://127.0.0.1:8000/api';
-function TeacherUsers(){
-    const [studentData,setstudentData] = useState([]);
+function EnrolledStudents(){
+    const [studentData,setstudentData] = useState([])
+    
+    let {course_id}=useParams();
 
-    const teacherId =localStorage.getItem('teacherId');
     // fetch courses when page load
     useEffect(()=>{
         try {
-            axios.get(`${baseUrl}/fetch-all-enroll-students/`+teacherId)
+            axios.get(`${baseUrl}/fetch-enroll-students/`+course_id)
             .then((response) => {
                 setstudentData(response.data);
             });
@@ -29,7 +30,7 @@ function TeacherUsers(){
                 </aside>
                 <section className="col-md-9" >
                     <div className="card">
-                        <h5 className="card-header">All enrolled Student List</h5>
+                        <h5 className="card-header">Enrolled Student List</h5>
                         <div className="card-body">
                             <table className="table table-bordered">
                                 <thead>
@@ -61,4 +62,4 @@ function TeacherUsers(){
     );
 }
 
-export default TeacherUsers;
+export default EnrolledStudents;
