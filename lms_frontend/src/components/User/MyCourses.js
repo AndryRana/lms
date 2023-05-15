@@ -1,7 +1,23 @@
 import {Link} from 'react-router-dom';
 import Sidebar from './Sidebar';
-
+import {useState, useEffect} from 'react';
+import axios from "axios";
+const baseUrl='http://127.0.0.1:8000/api';
 function MyCourses(){
+    const [courseData,setcourseData] = useState([]);
+
+    const studentId =localStorage.getItem('studentId');
+    // fetch students when page load
+    useEffect(()=>{
+        try {
+            axios.get(`${baseUrl}/fetch-enroll-courses/`+studentId)
+            .then((response) => {
+                setcourseData(response.data);
+            });
+        } catch (error) {
+            console.log(error);
+        }
+    },[]);
     return (
         <div className="container mt-4">
             <div className="row">
@@ -10,22 +26,22 @@ function MyCourses(){
                 </aside>
                 <section className="col-md-9" >
                     <div className="card">
-                        <h5 className="car-header">My courses</h5>
+                        <h5 className="card-header">My courses</h5>
                         <div className="card-body">
                             <table className="table table-bordered">
                                 <thead>
                                     <tr>
                                         <th>Name</th>
                                         <th>Created By</th>
-                                        <th>Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <td>Php Dev</td>
-                                    <td> <Link to="/"> Andry</Link></td>
-                                    <td>
-                                        <button className="btn btn-danger btn-sm active">Delete</button>
-                                    </td>
+                                {courseData.map((row,index)=>
+                                    <tr>
+                                        <td><Link to={`/detail/${row.course.id}`}>{row.course.title}</Link></td>
+                                        <td> <Link to={`/teacher-detail/${row.course.teacher.id}`}>{row.course.teacher.full_name} </Link></td>
+                                    </tr>
+                                )}
                                 </tbody>
                             </table>
                         </div>

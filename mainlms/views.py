@@ -1,12 +1,13 @@
 from django.shortcuts import render
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.db.models import Q
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import generics
 from rest_framework import permissions
-from .serializers import TeacherSerializer, CategorySerializer, CourseSerializer, ChapterSerializer, StudentSerializer, StudentCourseEnrollSerializer, CourseRatingSerializer, TeacherDashboardSerializer
-from .models import Teacher, CourseCategory, Course, Chapter, Student, StudentCourseEnrollment, CourseRating
+from .serializers import TeacherSerializer, CategorySerializer, CourseSerializer, ChapterSerializer, StudentSerializer, StudentCourseEnrollSerializer, CourseRatingSerializer, TeacherDashboardSerializer, StudentFavoriteCourseSerializer, StudentAssignmentSerializer
+from .models import Teacher, CourseCategory, Course, Chapter, Student, StudentCourseEnrollment, CourseRating, StudentFavoriteCourse, StudentAssignment
 
 # class TeacherList(APIView):
 #     def get(self, request):
@@ -44,7 +45,6 @@ def teacher_login(request):
 class CategoryList(generics.ListCreateAPIView):
     queryset=CourseCategory.objects.all()
     serializer_class = CategorySerializer
-    # permission_classes = [permissions.IsAuthenticated]
 
 #Course
 class CourseList(generics.ListCreateAPIView):
@@ -66,6 +66,17 @@ class CourseList(generics.ListCreateAPIView):
             teacher=self.request.GET['teacher']
             teacher=Teacher.objects.filter(id=teacher).first()
             qs=Course.objects.filter(techs__icontains=skill_name, teacher=teacher)
+            
+        elif 'studentId' in self.kwargs:
+            student_id=self.kwargs['studentId']
+            student=Student.objects.get(pk=student_id)
+            print(student.interested_categories)
+            queries=[Q(techs__iendswith=value) for value in student.interested_categories]
+            query= queries.pop()
+            for item in queries:
+                query |= item
+            qs=Course.objects.filter(query)
+            return qs
         return qs
 
 #Course detail       
@@ -139,6 +150,44 @@ def fetch_enroll_status(request, student_id, course_id):
     else:
         return JsonResponse({'bool':False})
 
+class StudentFavoriteCourseList(generics.ListCreateAPIView):
+    queryset=StudentFavoriteCourse.objects.all()
+    serializer_class = StudentFavoriteCourseSerializer
+    
+    def get_queryset(self):
+        if 'student_id' in self.kwargs:
+            student_id=self.kwargs['student_id']
+            student=Student.objects.get(pk=student_id)
+            return StudentFavoriteCourse.objects.filter(student=student).distinct('id')
+        
+def fetch_enroll_status(request, student_id, course_id):
+    student=Student.objects.filter(id=student_id).first()
+    course=Course.objects.filter(id=course_id).first()
+    enrollStatus=StudentCourseEnrollment.objects.filter(course=course,student=student).count()
+    if enrollStatus:
+        return JsonResponse({'bool':True})
+    else:
+        return JsonResponse({'bool':False})
+
+def fetch_favorite_status(request, student_id, course_id):
+    student=Student.objects.filter(id=student_id).first()
+    course=Course.objects.filter(id=course_id).first()
+    favoriteStatus=StudentFavoriteCourse.objects.filter(course=course,student=student).first()
+    if favoriteStatus and favoriteStatus.status == True:
+        return JsonResponse({'bool':True})
+    else:
+        return JsonResponse({'bool':False})
+
+def remove_favorite_course(request, course_id, student_id):
+    student=Student.objects.filter(id=student_id).first()
+    course=Course.objects.filter(id=course_id).first()
+    favoriteStatus=StudentFavoriteCourse.objects.filter(course=course,student=student).delete()
+    if favoriteStatus:
+        return JsonResponse({'bool':True})
+    else:
+        return JsonResponse({'bool':False})
+
+
 class EnrolledStudentList(generics.ListAPIView):
     queryset=StudentCourseEnrollment.objects.all()
     serializer_class = StudentCourseEnrollSerializer
@@ -152,6 +201,10 @@ class EnrolledStudentList(generics.ListAPIView):
             teacher_id=self.kwargs['teacher_id']
             teacher=Teacher.objects.get(pk=teacher_id)
             return StudentCourseEnrollment.objects.filter(course__teacher=teacher).distinct('id')
+        elif 'student_id' in self.kwargs:
+            student_id=self.kwargs['student_id']
+            student=Student.objects.get(pk=student_id)
+            return StudentCourseEnrollment.objects.filter(student=student).distinct('id')
             
     
 class CourseRatingList(generics.ListCreateAPIView):
@@ -180,3 +233,23 @@ def teacher_change_password(request,teacher_id):
         return JsonResponse({'bool':True})
     else:
         return JsonResponse({'bool':False})
+    
+class AssignmentList(generics.ListCreateAPIView):
+    queryset=StudentAssignment.objects.all()
+    serializer_class = StudentAssignmentSerializer
+    
+    def get_queryset(self):
+        student_id=self.kwargs['student_id']
+        teacher_id=self.kwargs['teacher_id']
+        student=Student.objects.get(pk=student_id)
+        teacher=Teacher.objects.get(pk=teacher_id)
+        return StudentAssignment.objects.filter(student=student, teacher=teacher)
+    
+class MyAssignmentList(generics.ListCreateAPIView):
+    queryset=StudentAssignment.objects.all()
+    serializer_class = StudentAssignmentSerializer
+    
+    def get_queryset(self):
+        student_id=self.kwargs['student_id']
+        student=Student.objects.get(pk=student_id)
+        return StudentAssignment.objects.filter(student=student)

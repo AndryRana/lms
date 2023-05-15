@@ -13,6 +13,7 @@ import RecommendedCourses from './User/RecommendedCourses';
 import ProfileSetting from './User/ProfileSetting';
 import ChangePassword from './User/ChangePassword';
 import MyCourses from './User/MyCourses';
+import StudentAssignments from './User/StudentAssignments';
 
 // Teachers
 import TeacherDashboard from './Teacher/TeacherDashboard';
@@ -28,6 +29,8 @@ import CourseChapters from './Teacher/CourseChapters';
 import EditChapter from './Teacher/EditChapter';
 import TeacherProfileSetting from './Teacher/TeacherProfileSetting';
 import TeacherUsers from './Teacher/TeacherUsers';
+import AddAssignment from './Teacher/AddAssignment';
+import ShowAssignment from './Teacher/ShowAssignment';
 import TeacherChangePassword from './Teacher/TeacherChangePassword';
 
 // List Pages
@@ -68,6 +71,9 @@ function Main(){
             <Route path="/add-course" element={<AddCourse />}/>
             <Route path="/edit-course/:course_id" element={<EditCourse />}/>
             <Route path="/add-chapter/:course_id" element={<AddChapter />}/>
+            <Route path="/add-assignment/:teacher_id/:student_id" element={<AddAssignment />}/>
+            <Route path="/show-assignment/:teacher_id/:student_id" element={<ShowAssignment />}/>
+            <Route path="/my-assignments/" element={<StudentAssignments />}/>
             <Route path="/teacher-profile-setting" element={<TeacherProfileSetting />}/>
             <Route path="/teacher-users" element={<TeacherUsers />}/>
             <Route path="/teacher-change-password" element={<TeacherChangePassword />}/>

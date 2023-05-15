@@ -32,8 +32,16 @@ urlpatterns = [
     path('fetch-enroll-status/<int:student_id>/<int:course_id>', views.fetch_enroll_status),
     path('fetch-all-enroll-students/<int:teacher_id>', views.EnrolledStudentList.as_view()),
     path('fetch-enroll-students/<int:course_id>', views.EnrolledStudentList.as_view()),
+    path('fetch-enroll-courses/<int:student_id>', views.EnrolledStudentList.as_view()),
+    path('student-add-favorite-course/', views.StudentFavoriteCourseList.as_view()),
+    path('student-remove-favorite-course/<int:course_id>/<int:student_id>', views.remove_favorite_course),
+    path('fetch-favorite-status/<int:student_id>/<int:course_id>', views.fetch_favorite_status),
+    path('fetch-recommended-courses/<int:studentId>/', views.CourseList.as_view()),
     path('course-rating/', views.CourseRatingList.as_view()),
     path('fetch-rating-status/<int:student_id>/<int:course_id>', views.fetch_rating_status),
+    path('fetch-favorite-courses/<int:student_id>', views.StudentFavoriteCourseList.as_view()),
+    path('student-assignment/<int:teacher_id>/<int:student_id>', views.AssignmentList.as_view()),
+    path('my-assignments/<int:student_id>', views.MyAssignmentList.as_view()),
     
     
 ]

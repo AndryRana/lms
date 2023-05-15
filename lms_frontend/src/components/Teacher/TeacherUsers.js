@@ -1,4 +1,4 @@
-import {useParams} from 'react-router-dom';
+import {Link, useParams} from 'react-router-dom';
 import TeacherSidebar from './TeacherSidebar';
 import {useState, useEffect} from 'react';
 import axios from "axios";
@@ -31,23 +31,28 @@ function TeacherUsers(){
                     <div className="card">
                         <h5 className="card-header">All enrolled Student List</h5>
                         <div className="card-body">
-                            <table className="table table-bordered">
+                            <table className="table table-bordered table-hover">
                                 <thead>
                                     <tr>
                                         <th>Name</th>
                                         <th>Email</th>
                                         <th>Username</th>
                                         <th>Interested categories</th>
+                                        <th>Assignment</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {studentData.map((row,index)=>
-                                    <tr>
+                                    <tr >
                                         <td>{row.student.full_name} </td>
                                         <td> {row.student.email}</td>
                                         <td> {row.student.username}</td>
                                         <td>
                                         {row.student.interested_categories}
+                                        </td>
+                                        <td>
+                                            <Link to={`/show-assignment/${teacherId}/${row.student.id}`}  className="btn btn-sm btn-warning">Assignments</Link>
+                                            <Link to={`/add-assignment/${teacherId}/${row.student.id}`} className="btn btn-sm btn-success ms-2">Add Assignment</Link>
                                         </td>
                                     </tr>
                                     )}

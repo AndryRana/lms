@@ -3,16 +3,16 @@ import Sidebar from './Sidebar';
 import {useState, useEffect} from 'react';
 import axios from "axios";
 const baseUrl='http://127.0.0.1:8000/api';
-function FavoriteCourses(){
-    const [courseData,setcourseData] = useState([]);
+function StudentAssignments(){
+    const [assignmentData,setassignmentData] = useState([]);
 
     const studentId =localStorage.getItem('studentId');
     // fetch students when page load
     useEffect(()=>{
         try {
-            axios.get(`${baseUrl}/fetch-favorite-courses/`+studentId)
+            axios.get(`${baseUrl}/my-assignments/`+studentId)
             .then((response) => {
-                setcourseData(response.data);
+                setassignmentData(response.data);
             });
         } catch (error) {
             console.log(error);
@@ -26,20 +26,22 @@ function FavoriteCourses(){
                 </aside>
                 <section className="col-md-9" >
                     <div className="card">
-                        <h5 className="card-header">Favorite courses</h5>
+                        <h5 className="card-header">My assignments</h5>
                         <div className="card-body">
                             <table className="table table-bordered">
                                 <thead>
                                     <tr>
-                                        <th>Name</th>
-                                        <th>Created By</th>
+                                        <th>Title</th>
+                                        <th>detail</th>
+                                        <th>Teacher</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                {courseData.map((row,index)=>
+                                {assignmentData.map((row,index)=>
                                     <tr>
-                                        <td><Link to={`/detail/${row.course.id}`}>{row.course.title}</Link></td>
-                                        <td> <Link to={`/teacher-detail/${row.course.teacher.id}`}>{row.course.teacher.full_name} </Link></td>
+                                        <td>{row.title}</td>
+                                        <td>{row.detail}</td>
+                                        <td> <Link to={`/teacher-detail/${row.teacher.id}`}>{row.teacher.full_name} </Link></td>
                                     </tr>
                                 )}
                                 </tbody>
@@ -52,4 +54,4 @@ function FavoriteCourses(){
     );
 }
 
-export default FavoriteCourses;
+export default StudentAssignments;

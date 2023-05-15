@@ -1,47 +1,51 @@
-import {Link} from 'react-router-dom';
-import Sidebar from './Sidebar';
+import {Link,useParams} from 'react-router-dom';
+import TeacherSidebar from './TeacherSidebar';
 import {useState, useEffect} from 'react';
 import axios from "axios";
-const baseUrl='http://127.0.0.1:8000/api';
-function FavoriteCourses(){
-    const [courseData,setcourseData] = useState([]);
+import Swal from 'sweetalert2'
 
-    const studentId =localStorage.getItem('studentId');
-    // fetch students when page load
+const baseUrl='http://127.0.0.1:8000/api';
+
+function ShowAssignment(){
+    const [assignmentData,setassignmentData] = useState([]);
+    const [totalResult,settotalResult] = useState(0);
+    const {teacher_id}=useParams();
+    const {student_id}=useParams();
+    // fetch courses when page load
     useEffect(()=>{
         try {
-            axios.get(`${baseUrl}/fetch-favorite-courses/`+studentId)
+            axios.get(`${baseUrl}/student-assignment/`+teacher_id+'/'+student_id)
             .then((response) => {
-                setcourseData(response.data);
+                settotalResult(response.data.length);
+                setassignmentData(response.data);
             });
         } catch (error) {
             console.log(error);
         }
     },[]);
+    
     return (
         <div className="container mt-4">
             <div className="row">
                 <aside className="col-md-3" >
-                    <Sidebar/>
+                    <TeacherSidebar/>
                 </aside>
                 <section className="col-md-9" >
                     <div className="card">
-                        <h5 className="card-header">Favorite courses</h5>
+                        <h5 className="card-header">All Assignments ({totalResult}) <Link className="me-3 btn btn-success btn-sm float-end" to={`/add-assignment/`+teacher_id+'/'+student_id}>Add Assignment</Link></h5>
                         <div className="card-body">
                             <table className="table table-bordered">
                                 <thead>
                                     <tr>
-                                        <th>Name</th>
-                                        <th>Created By</th>
+                                        <th>Title</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                {courseData.map((row,index)=>
+                                    {assignmentData.map((assignment,index)=>
                                     <tr>
-                                        <td><Link to={`/detail/${row.course.id}`}>{row.course.title}</Link></td>
-                                        <td> <Link to={`/teacher-detail/${row.course.teacher.id}`}>{row.course.teacher.full_name} </Link></td>
+                                        <td>{assignment.title} </td>
                                     </tr>
-                                )}
+                                    )}
                                 </tbody>
                             </table>
                         </div>
@@ -52,4 +56,4 @@ function FavoriteCourses(){
     );
 }
 
-export default FavoriteCourses;
+export default ShowAssignment;

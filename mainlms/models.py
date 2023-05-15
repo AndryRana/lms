@@ -25,7 +25,7 @@ class Teacher(models.Model):
     
     #total teacher chapter
     def total_teacher_chapters(self):
-        total_chapters=Chapter.objects.filter(course__teacher=self).count()
+        total_chapters=Chapter.objects.filter(course__teacher=self).count() 
         return total_chapters
     
     #Total teacher Students
@@ -114,6 +114,18 @@ class StudentCourseEnrollment(models.Model):
     def __str__(self):
         return f"{self.course} - {self.student}"
     
+#  Student Favorite course       
+class StudentFavoriteCourse(models.Model):
+    course=models.ForeignKey(Course, on_delete=models.CASCADE)
+    student=models.ForeignKey(Student, on_delete=models.CASCADE)
+    status=models.BooleanField(default=True)
+    
+    class Meta:
+        verbose_name_plural="7. Student Favorite Courses"
+        
+    def __str__(self):
+        return f"{self.course} - {self.student}"
+    
 # Course Rating and Review
 class CourseRating(models.Model):
     course = models.ForeignKey(Course,on_delete=models.CASCADE, null=True) 
@@ -122,5 +134,25 @@ class CourseRating(models.Model):
     reviews=models.TextField(null=True)
     review_time=models.DateTimeField(auto_now_add=True)
     
+    class Meta:
+        verbose_name_plural="8. Course Rating"
+        
+    
     def __str__(self):
         return f"{self.course} - {self.student} - {self.rating}"
+
+    
+# Student Assignment
+class StudentAssignment(models.Model):
+    teacher=models.ForeignKey(Teacher,on_delete=models.CASCADE, null=True)
+    student=models.ForeignKey(Student,on_delete=models.CASCADE, null=True)
+    title=models.CharField(max_length=200)
+    detail=models.TextField(null=True)
+    add_time=models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        verbose_name_plural="9. Student Assignments"
+    
+    def __str__(self):
+        return f"{self.title} - {self.student}"
+
