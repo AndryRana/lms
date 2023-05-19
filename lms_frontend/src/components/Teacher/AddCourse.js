@@ -88,42 +88,40 @@ function AddCourse(){
                     <div className="card">
                         <h5 className="card-header">Add Course</h5>
                         <div className="card-body">
-                            <form action="">
-                                <div className="mb-3 row">
-                                    <label htmlFor="category" className="col-sm-2 col-form-label">Category</label>
-                                    <div className="col-sm-10">
-                                        <select  name="category" onChange={handleChange} id="" className='form-control'>
-                                            {cats.map((category,index)=>{return <option key={index} value={category.id}>{category.title}</option>})}
-                                        </select>
-                                    </div>
+                            <div className="mb-3 row">
+                                <label htmlFor="category" className="col-sm-2 col-form-label">Category</label>
+                                <div className="col-sm-10">
+                                    <select  name="category" onChange={handleChange} id="" className='form-control'>
+                                        {cats.map((category,index)=>{return <option key={index} value={category.id}>{category.title}</option>})}
+                                    </select>
                                 </div>
-                                <div className="mb-3 row">
-                                    <label htmlFor="title" className="col-sm-2 col-form-label">Title</label>
-                                    <div className="col-sm-10">
-                                        <input  name='title' onChange={handleChange} type="text" readonly className="form-control" id="title" />
-                                    </div>
+                            </div>
+                            <div className="mb-3 row">
+                                <label htmlFor="title" className="col-sm-2 col-form-label">Title</label>
+                                <div className="col-sm-10">
+                                    <input  name='title' onChange={handleChange} type="text" readonly className="form-control" id="title" />
                                 </div>
-                                <div className="mb-3 row">
-                                    <label htmlFor="description" className="col-sm-2 col-form-label">Description</label>
-                                    <div className="col-sm-10">
-                                        <textarea  name='description' onChange={handleChange} className= "form-control" id="description" ></textarea>
-                                    </div>
+                            </div>
+                            <div className="mb-3 row">
+                                <label htmlFor="description" className="col-sm-2 col-form-label">Description</label>
+                                <div className="col-sm-10">
+                                    <textarea  name='description' onChange={handleChange} className= "form-control" id="description" ></textarea>
                                 </div>
-                                <div className="mb-3 row">
-                                    <label htmlFor="img" className="col-sm-2 col-form-label">Featured Image</label>
-                                    <div className="col-sm-10">
-                                        <input  name='f_img' onChange={handleFileChange} type="file" className="form-control" id="img"/>
-                                    </div>
+                            </div>
+                            <div className="mb-3 row">
+                                <label htmlFor="img" className="col-sm-2 col-form-label">Featured Image</label>
+                                <div className="col-sm-10">
+                                    <input  name='f_img' onChange={handleFileChange} type="file" className="form-control" id="img"/>
                                 </div>
-                                <div className="mb-3 row">
-                                    <label htmlFor="techs" className="col-sm-2 col-form-label">Technologies</label>
-                                    <div className="col-sm-10">
-                                        <textarea  name='techs' onChange={handleChange} className= "form-control" id="techs" placeholder="Php, Python, HTML, CSS, Javascript"></textarea>
-                                    </div>
+                            </div>
+                            <div className="mb-3 row">
+                                <label htmlFor="techs" className="col-sm-2 col-form-label">Technologies</label>
+                                <div className="col-sm-10">
+                                    <textarea  name='techs' onChange={handleChange} className= "form-control" id="techs" placeholder="Php, Python, HTML, CSS, Javascript"></textarea>
                                 </div>
-                                <hr/>
-                                <button type="submit" onClick={formSubmit} className="btn btn-primary">Submit</button>
-                            </form>
+                            </div>
+                            <hr/>
+                            <button type="button" onClick={formSubmit} className="btn btn-primary">Submit</button>
                         </div>
                     </div>
                 </section>

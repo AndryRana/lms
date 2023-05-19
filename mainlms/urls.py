@@ -27,6 +27,9 @@ urlpatterns = [
     path('teacher-course-detail/<int:pk>', views.TeacherCourseDetail.as_view()),
     #Student
     path('student/', views.StudentList.as_view()),
+    path('student/<int:pk>/', views.StudentDetail.as_view()),
+    path('student/dashboard/<int:pk>/', views.StudentDashboard.as_view()),
+    path('student/change-password/<int:student_id>/', views.student_change_password),
     path('student-login', views.student_login),
     path('student-enroll-course/', views.StudentEnrollCourseList.as_view()),
     path('fetch-enroll-status/<int:student_id>/<int:course_id>', views.fetch_enroll_status),
@@ -42,6 +45,21 @@ urlpatterns = [
     path('fetch-favorite-courses/<int:student_id>', views.StudentFavoriteCourseList.as_view()),
     path('student-assignment/<int:teacher_id>/<int:student_id>', views.AssignmentList.as_view()),
     path('my-assignments/<int:student_id>', views.MyAssignmentList.as_view()),
+    path('update-assignments/<int:pk>', views.UpdateAssignment.as_view()),
+    path('student/fetch-all-notifications/<int:student_id>', views.NotificationList.as_view()),
+    path('save-notification/', views.NotificationList.as_view()),
     
-    
+    #Quiz start
+    path('quiz/', views.QuizList.as_view()),
+    path('teacher-quiz/<int:teacher_id>', views.TeacherQuizList.as_view()),
+    path('teacher-quiz-detail/<int:pk>', views.TeacherQuizDetail.as_view()),
+    path('quiz/<int:pk>', views.QuizDetailView.as_view()),
+    path('quiz-questions/<int:quiz_id>', views.QuizQuestionList.as_view()),
+    path('quiz-questions/<int:quiz_id>/<int:limit>', views.QuizQuestionList.as_view()),
+    path('fetch-quiz-assign-status/<int:quiz_id>/<int:course_id>', views.fetch_quiz_assign_status),
+    path('quiz-assign-course/', views.CourseQuizList.as_view()),
+    path('fetch-assigned-quiz/<int:course_id>', views.CourseQuizList.as_view()),
+    path('attempt-quiz/', views.AttemptQuizList.as_view()),
+    path('quiz-questions/<int:quiz_id>/next-question/<int:question_id>', views.QuizQuestionList.as_view()),
+    path('fetch-quiz-attempt-status/<int:quiz_id>/<int:student_id>', views.fetch_quiz_attempt_status),
 ]

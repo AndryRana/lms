@@ -6,8 +6,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import generics
 from rest_framework import permissions
-from .serializers import TeacherSerializer, CategorySerializer, CourseSerializer, ChapterSerializer, StudentSerializer, StudentCourseEnrollSerializer, CourseRatingSerializer, TeacherDashboardSerializer, StudentFavoriteCourseSerializer, StudentAssignmentSerializer
-from .models import Teacher, CourseCategory, Course, Chapter, Student, StudentCourseEnrollment, CourseRating, StudentFavoriteCourse, StudentAssignment
+from .serializers import TeacherSerializer, CategorySerializer, CourseSerializer, ChapterSerializer, StudentSerializer, StudentCourseEnrollSerializer, CourseRatingSerializer, TeacherDashboardSerializer, StudentFavoriteCourseSerializer, StudentAssignmentSerializer, StudentDashboardSerializer, NotificationSerializer,QuizSerializer, QuestionSerializer, CourseQuizSerializer, AttemptQuizSerializer
+from .models import Teacher, CourseCategory, Course, Chapter, Student, StudentCourseEnrollment, CourseRating, StudentFavoriteCourse, StudentAssignment, Notification, Quiz, QuizQuestions, CourseQuiz, AttemptQuiz
 
 # class TeacherList(APIView):
 #     def get(self, request):
@@ -18,12 +18,10 @@ from .models import Teacher, CourseCategory, Course, Chapter, Student, StudentCo
 class TeacherList(generics.ListCreateAPIView):
     queryset=Teacher.objects.all()
     serializer_class = TeacherSerializer
-    # permission_classes = [permissions.IsAuthenticated]
     
 class TeacherDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset=Teacher.objects.all()
     serializer_class = TeacherSerializer
-    # permission_classes = [permissions.IsAuthenticated]
     
 class TeacherDashboard(generics.RetrieveAPIView):
     queryset=Teacher.objects.all()
@@ -122,7 +120,17 @@ class ChapterDetailList(generics.RetrieveUpdateDestroyAPIView):
 class StudentList(generics.ListCreateAPIView):
     queryset=Student.objects.all()
     serializer_class = StudentSerializer
+
+class StudentDashboard(generics.RetrieveAPIView):
+    queryset=Student.objects.all()
+    serializer_class = StudentDashboardSerializer
+
+
+class StudentDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset=Student.objects.all()
+    serializer_class = StudentSerializer
     
+
 @csrf_exempt
 def student_login(request):
     email=request.POST['email']
@@ -252,4 +260,104 @@ class MyAssignmentList(generics.ListCreateAPIView):
     def get_queryset(self):
         student_id=self.kwargs['student_id']
         student=Student.objects.get(pk=student_id)
+        #Update Notifications status
+        Notification.objects.filter(student=student, notif_for='student',notif_subject='assignment').update(notif_read_status=True)
         return StudentAssignment.objects.filter(student=student)
+    
+class UpdateAssignment(generics.RetrieveUpdateDestroyAPIView):
+    queryset=StudentAssignment.objects.all()
+    serializer_class = StudentAssignmentSerializer
+    
+@csrf_exempt
+def student_change_password(request,student_id):
+    password=request.POST['password']
+    try:
+        studentData= Student.objects.get(id=student_id)
+    except student.DoesNotExist:
+        studentData=None
+    if studentData:
+        Student.objects.filter(id=student_id).update(password=password)
+        return JsonResponse({'bool':True})
+    else:
+        return JsonResponse({'bool':False})
+    
+class NotificationList(generics.ListCreateAPIView):
+    queryset=Notification.objects.all()
+    serializer_class = NotificationSerializer
+    
+    def get_queryset(self):
+        student_id=self.kwargs['student_id']
+        student=Student.objects.get(pk=student_id)
+        return Notification.objects.filter(student=student,notif_for='student',notif_subject='assignment',notif_read_status=False)
+    
+    
+class QuizList(generics.ListCreateAPIView):
+    queryset = Quiz.objects.all()
+    serializer_class= QuizSerializer
+    
+    
+class TeacherQuizList(generics.ListCreateAPIView):
+    serializer_class = QuizSerializer
+    
+    def get_queryset(self):
+        teacher_id=self.kwargs['teacher_id']
+        teacher=Teacher.objects.get(pk=teacher_id)
+        return Quiz.objects.filter(teacher=teacher)
+
+
+class TeacherQuizDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset=Quiz.objects.all()
+    serializer_class = QuizSerializer
+    
+class QuizDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset=Quiz.objects.all()
+    serializer_class = QuizSerializer
+    
+    
+class QuizQuestionList(generics.ListCreateAPIView):
+    serializer_class = QuestionSerializer
+    
+    def get_queryset(self):
+        quiz_id=self.kwargs['quiz_id']
+        quiz=Quiz.objects.get(pk=quiz_id)
+        if 'limit' in self.kwargs:
+            return QuizQuestions.objects.filter(quiz=quiz).order_by('id')[:1]
+        elif 'question_id' in self.kwargs:
+            current_question=self.kwargs['question_id']
+            return QuizQuestions.objects.filter(quiz=quiz,id__gt=current_question).order_by('id')[:1]
+        else:
+            return QuizQuestions.objects.filter(quiz=quiz)
+    
+class CourseQuizList(generics.ListCreateAPIView):
+    queryset=CourseQuiz.objects.all()
+    serializer_class = CourseQuizSerializer
+    
+    def get_queryset(self):
+        if 'course_id' in self.kwargs:
+            course_id=self.kwargs['course_id']
+            course=Course.objects.get(pk=course_id)
+            return CourseQuiz.objects.filter(course=course)
+    
+def fetch_quiz_assign_status(request, quiz_id, course_id):
+    quiz=Quiz.objects.filter(id=quiz_id).first()
+    course=Course.objects.filter(id=course_id).first()
+    assignStatus=CourseQuiz.objects.filter(course=course,quiz=quiz).count()
+    if assignStatus:
+        return JsonResponse({'bool':True})
+    else:
+        return JsonResponse({'bool':False})
+    
+class AttemptQuizList(generics.ListCreateAPIView):
+    queryset=AttemptQuiz.objects.all()
+    serializer_class = AttemptQuizSerializer
+    
+def fetch_quiz_attempt_status(request, quiz_id, student_id):
+    quiz=Quiz.objects.filter(id=quiz_id).first()
+    student=Student.objects.filter(id=student_id).first()
+    attemptStatus=AttemptQuiz.objects.filter(student=student,question__quiz=quiz).count()
+    # print(AttemptQuiz.objects.filter(student=student,question__quiz=quiz).query)
+    if attemptStatus>0:
+        return JsonResponse({'bool':True})
+    else:
+        return JsonResponse({'bool':False})
+    

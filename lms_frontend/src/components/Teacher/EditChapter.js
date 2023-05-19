@@ -47,7 +47,6 @@ function EditChapter(){
             })
             .then((res)=>{
                 if(res.status ===200) {
-                    const Swal = require('sweetalert2')
                     Swal.fire({
                         title: 'Data has been updated!',
                         icon: 'success',

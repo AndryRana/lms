@@ -6,25 +6,26 @@ import Swal from 'sweetalert2';
 
 const baseUrl='http://127.0.0.1:8000/api';
 
-function CourseChapters(){
-    const [chapterData,setchapterData] = useState([]);
+function QuizQuestions(){
+    const [questionData,setquestionData] = useState([]);
     const [totalResult,settotalResult] = useState(0);
-    const {course_id}=useParams();
-    // fetch courses when page load
+    const {quiz_id}=useParams();
+    // fetch quizs when page load
     useEffect(()=>{
         try {
-            axios.get(`${baseUrl}/course-chapters/`+course_id)
+            axios.get(`${baseUrl}/quiz-questions/`+quiz_id)
             .then((response) => {
                 settotalResult(response.data.length);
-                setchapterData(response.data);
+                setquestionData(response.data);
             });
         } catch (error) {
             console.log(error);
         }
+        document.title='Quiz Questions'
     },[]);
     
     // delete Data
-    const handleDeleteClick =(chapter_id)=>{
+    const handleDeleteClick =(question_id)=>{
         Swal.fire({
             title: 'Confirm!',
             text: 'Do you want to delete?',
@@ -34,14 +35,14 @@ function CourseChapters(){
         }).then((result) => {
             if(result.isConfirmed) {
                 try {
-                    axios.delete(baseUrl +'/chapter/'+chapter_id)
+                    axios.delete(baseUrl +'/question/'+question_id)
                     .then((res) => {
                         Swal.fire('success', 'Data has been deleted.');
                         try {
-                            axios.get(`${baseUrl}/course-chapters/`+course_id)
+                            axios.get(`${baseUrl}/quiz-questions/`+quiz_id)
                             .then((response) => {
                                 settotalResult(response.data.length);
-                                setchapterData(response.data);
+                                setquestionData(response.data);
                             });
                         } catch (error) {
                             console.log(error);
@@ -65,33 +66,22 @@ function CourseChapters(){
                 </aside>
                 <section className="col-md-9" >
                     <div className="card">
-                        <h5 className="car-header mt-1">All Chapters ({totalResult}) <Link className="me-3 btn btn-success btn-sm float-end" to={`/add-chapter/`+course_id}>Add Chapter</Link></h5>
+                        <h5 className="card-header mt-1">All Questions ({totalResult}) <Link className="me-3 btn btn-success btn-sm float-end" to={`/add-question/`+quiz_id}>Add Question</Link></h5>
                         <div className="card-body">
                             <table className="table table-bordered">
                                 <thead>
                                     <tr>
-                                        <th>Title</th>
-                                        <th>Video</th>
-                                        <th>Remarks</th>
+                                        <th>Question</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {chapterData.map((chapter,index)=>
+                                    {questionData.map((row,index)=>
                                     <tr>
-                                        <td><Link to={`/edit-chapter/`+chapter.id}>{chapter.title}</Link> </td>
+                                        <td><Link to={`/edit-question/`+row.id}>{row.questions}</Link> </td>
                                         <td>
-                                            <video controls width="250">
-                                                <source src={chapter.video.url} type="video/webm"/>
-                                            
-                                                <source src={chapter.video.url} type="video/mp4"/>
-                                            </video>
-                                    
-                                        </td>
-                                        <td> {chapter.remarks}</td>
-                                        <td>
-                                            <Link to={`/edit-chapter/`+chapter.id} className="btn btn-info text-white btn-sm "><i class="bi bi-pencil-square"></i></Link>
-                                            <button onClick={()=>handleDeleteClick(chapter.id)} className="btn btn-danger btn-sm ms-1"><i class="bi bi-trash"></i></button>
+                                            <Link to={`/edit-question/`+row.id} className="btn btn-info text-white btn-sm "><i class="bi bi-pencil-square"></i></Link>
+                                            <button onClick={()=>handleDeleteClick(row.id)} className="btn btn-danger btn-sm ms-1"><i class="bi bi-trash"></i></button>
                                         </td>
                                     </tr>
                                     )}
@@ -105,4 +95,4 @@ function CourseChapters(){
     );
 }
 
-export default CourseChapters;
+export default QuizQuestions;

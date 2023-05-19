@@ -57,6 +57,7 @@ function MyCourses(){
                                         <td>
                                         <Link className="btn btn-info btn-sm" to={`/edit-course/`+ course.id} >Edit</Link>
                                         <Link className="btn btn-success btn-sm ms-2" to={`/add-chapter/`+ course.id} >Add Chapter</Link>
+                                        <Link className="btn btn-warning btn-sm ms-2" to={`/assign-quiz/`+ course.id} >Assign Quiz</Link>
                                         <button className="btn btn-danger btn-sm ms-2">Delete</button>
                                         </td>
                                     </tr>

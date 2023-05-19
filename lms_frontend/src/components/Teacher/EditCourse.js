@@ -2,7 +2,7 @@ import {useParams} from 'react-router-dom';
 import TeacherSidebar from './TeacherSidebar';
 import {useState, useEffect} from 'react';
 import axios from "axios";
-import Swal from 'sweetalert2'
+import Swal from 'sweetalert2';
 const baseUrl='http://127.0.0.1:8000/api';
 function EditCourse(){
     const [cats, setCats]=useState([]);
@@ -14,7 +14,7 @@ function EditCourse(){
         f_img:'',
         techs:''
     });
-
+    const teacherId =localStorage.getItem('teacherId');
     const {course_id}=useParams();
     // Fetch categories when page load
     useEffect(()=>{
@@ -62,7 +62,7 @@ function EditCourse(){
         event.preventDefault();
         const _formData=new FormData();
         _formData.append('category', courseData.category);
-        _formData.append('teacher', 1);
+        _formData.append('teacher', teacherId);
         _formData.append('title', courseData.title);
         _formData.append('description', courseData.description);
         if(courseData.f_img!=='') {
@@ -77,7 +77,6 @@ function EditCourse(){
             })
             .then((res)=>{
                 if(res.status ===200) {
-                    const Swal = require('sweetalert2')
                     Swal.fire({
                         title: 'Data has been updated!',
                         icon: 'success',
@@ -108,45 +107,43 @@ function EditCourse(){
                     <div className="card">
                         <h5 className="card-header">Edit Course</h5>
                         <div className="card-body">
-                            <form action="">
-                                <div className="mb-3 row">
-                                    <label htmlFor="category" className="col-sm-2 col-form-label">Category</label>
-                                    <div className="col-sm-10">
-                                        <select  name="category" value={courseData.category} onChange={handleChange} id="" className='form-control'>
-                                            {cats.map((category,index)=>{return <option key={index} value={category.id}>{category.title}</option>})}
-                                        </select>
-                                    </div>
+                            <div className="mb-3 row">
+                                <label htmlFor="category" className="col-sm-2 col-form-label">Category</label>
+                                <div className="col-sm-10">
+                                    <select  name="category" value={courseData.category} onChange={handleChange} id="" className='form-control'>
+                                        {cats.map((category,index)=>{return <option key={index} value={category.id}>{category.title}</option>})}
+                                    </select>
                                 </div>
-                                <div className="mb-3 row">
-                                    <label htmlFor="title" className="col-sm-2 col-form-label">Title</label>
-                                    <div className="col-sm-10">
-                                        <input  name='title'  value={courseData.title}  onChange={handleChange} type="text" readonly className="form-control" id="title" />
-                                    </div>
+                            </div>
+                            <div className="mb-3 row">
+                                <label htmlFor="title" className="col-sm-2 col-form-label">Title</label>
+                                <div className="col-sm-10">
+                                    <input  name='title'  value={courseData.title}  onChange={handleChange} type="text" readonly className="form-control" id="title" />
                                 </div>
-                                <div className="mb-3 row">
-                                    <label htmlFor="description" className="col-sm-2 col-form-label">Description</label>
-                                    <div className="col-sm-10">
-                                        <textarea  name='description'  value={courseData.description}  onChange={handleChange} className= "form-control" id="description" ></textarea>
-                                    </div>
+                            </div>
+                            <div className="mb-3 row">
+                                <label htmlFor="description" className="col-sm-2 col-form-label">Description</label>
+                                <div className="col-sm-10">
+                                    <textarea  name='description'  value={courseData.description}  onChange={handleChange} className= "form-control" id="description" ></textarea>
                                 </div>
-                                <div className="mb-3 row">
-                                    <label htmlFor="img" className="col-sm-2 col-form-label">Featured Image</label>
-                                    <div className="col-sm-10">
-                                        <input  name='f_img'  onChange={handleFileChange} type="file" className="form-control" id="img"/>
-                                        {courseData.prev_img &&
-                                        <p className="mt-2"><img src={courseData.prev_img} width="300" alt={courseData.title}/></p>
-                                        }
-                                    </div>
+                            </div>
+                            <div className="mb-3 row">
+                                <label htmlFor="img" className="col-sm-2 col-form-label">Featured Image</label>
+                                <div className="col-sm-10">
+                                    <input  name='f_img'  onChange={handleFileChange} type="file" className="form-control" id="img"/>
+                                    {courseData.prev_img &&
+                                    <p className="mt-2"><img src={courseData.prev_img} width="300" alt={courseData.title}/></p>
+                                    }
                                 </div>
-                                <div className="mb-3 row">
-                                    <label htmlFor="techs" className="col-sm-2 col-form-label">Technologies</label>
-                                    <div className="col-sm-10">
-                                        <textarea  name='techs'  value={courseData.techs}  onChange={handleChange} className= "form-control" id="techs" placeholder="Php, Python, HTML, CSS, Javascript"></textarea>
-                                    </div>
+                            </div>
+                            <div className="mb-3 row">
+                                <label htmlFor="techs" className="col-sm-2 col-form-label">Technologies</label>
+                                <div className="col-sm-10">
+                                    <textarea  name='techs'  value={courseData.techs}  onChange={handleChange} className= "form-control" id="techs" placeholder="Php, Python, HTML, CSS, Javascript"></textarea>
                                 </div>
-                                <hr/>
-                                <button type="submit" onClick={formSubmit} className="btn btn-primary">Submit</button>
-                            </form>
+                            </div>
+                            <hr/>
+                            <button type="button" onClick={formSubmit} className="btn btn-primary">Submit</button>
                         </div>
                     </div>
                 </section>
