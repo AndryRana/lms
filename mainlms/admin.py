@@ -19,3 +19,7 @@ admin.site.register(models.Quiz)
 admin.site.register(models.QuizQuestions)
 admin.site.register(models.CourseQuiz)
 admin.site.register(models.AttemptQuiz)
+
+class StudyMaterialAdmin(admin.ModelAdmin):
+    list_display= ['id', 'course','title', 'description']
+admin.site.register(models.StudyMaterial, StudyMaterialAdmin)

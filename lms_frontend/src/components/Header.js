@@ -1,8 +1,24 @@
 import {Link} from 'react-router-dom';
+import {useState, useEffect} from 'react';
 
 function Header() {
+    const [searchstring, setsearchstring]=useState({
+        'search':'',
+    });
     const teacherLoginStatus =localStorage.getItem('teacherLoginStatus')
     const studentLoginStatus =localStorage.getItem('studentLoginStatus')
+
+    const handleChange=(event) =>{
+        setsearchstring({
+            ...searchstring,
+            [event.target.name]:event.target.value
+        });
+    }
+    const searchCourse = () => {
+        if( searchstring.search!=''){
+            window.location.href='/search/'+searchstring.search;
+        }
+    }
     return (
         <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
                 <div className="container">
@@ -22,6 +38,10 @@ function Header() {
                     </button>
                     <div className="collapse navbar-collapse" id="navbarNav">
                         <ul className="navbar-nav ms-auto">
+                            <form className="d-flex">
+                                <input name="search" onChange={handleChange} className="form-control me-2" type="search" placeholder="Search by course title" aria-label="Search"/>
+                                <button onClick={searchCourse} className="btn btn-warning" type="button">Search</button>
+                            </form>
                             <li className="nav-item">
                                 <Link className="nav-link active" aria-current="page" to="/">
                                     Home
@@ -33,9 +53,9 @@ function Header() {
                                 </Link>
                             </li>
                             <li className="nav-item dropdown">
-                                <a className="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <Link className="nav-link dropdown-toggle" to="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                     Teacher
-                                </a>
+                                </Link>
                                 <ul className="dropdown-menu" aria-labelledby="navbarDropdown">
                                     {teacherLoginStatus!=='true' && 
                                         <>
@@ -43,14 +63,16 @@ function Header() {
                                         <li ><Link className="dropdown-item" to="/teacher-register">Register</Link></li>
                                         </>
                                     }
-                                        <li><Link className="dropdown-item" to="/teacher-dashboard">Dashbord</Link></li>
-                                        <li><Link className="dropdown-item" to="/teacher-logout">Logout</Link></li>
+                                    
+                                    <li><Link className="dropdown-item" to="/teacher-dashboard">Dashbord</Link></li>
+                                    <li><Link className="dropdown-item" to="/teacher-logout">Logout</Link></li>
+                                
                                 </ul>
-                            </li>
+                                </li>
                             <li className="nav-item dropdown">
-                                <a className="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <Link className="nav-link dropdown-toggle" to="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                     User
-                                </a>
+                                </Link>
                                 <ul className="dropdown-menu" aria-labelledby="navbarDropdown">
                                 {studentLoginStatus!=='true' && 
                                     <>
