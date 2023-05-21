@@ -58,7 +58,12 @@ const assignQuiz=(quiz_id) => {
                 <button onClick={()=>assignQuiz(props.quiz)}  className="btn btn-success btn-sm">Assign Quiz</button>
             }
             {quizData.bool==true &&
-                <span className="badge bg-info">Assigned</span>
+                <>
+                <span className="badge bg-info text-black">
+                Assigned 
+                </span>
+                <Link to={`/attempted-students/`+props.quiz} className='badge bg-warning ms-2 text-decoration-none'>Attempted Students</Link>
+                </>
             }
            
         </td>

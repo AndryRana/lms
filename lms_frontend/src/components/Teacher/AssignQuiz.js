@@ -4,7 +4,6 @@ import TeacherSidebar from './TeacherSidebar';
 import CheckQuizinCourse from './CheckQuizinCourse';
 import {useState, useEffect} from 'react';
 import axios from "axios";
-import Swal from 'sweetalert2';
 const baseUrl='http://127.0.0.1:8000/api';
 function AllQuiz(){
     const [quizData,setquizData] = useState([]);
@@ -16,7 +15,7 @@ function AllQuiz(){
         try {
             axios.get(`${baseUrl}/teacher-quiz/`+teacherId)
             .then((response) => {
-                console.log('teacher-quiz',response.data);
+                console.log(response.data);
                 setquizData(response.data);
             });
         } catch (error) {
@@ -57,8 +56,9 @@ function AllQuiz(){
                                         <tr>
                                             <td>
                                                 <Link to={`/all-questions/`+ row.id}>{row.title}</Link>
-                                            </td>
+                                                </td>
                                                 <CheckQuizinCourse quiz={row.id} course={course_id}/>
+                                                
                                         </tr>
                                     )}
                                 </tbody>

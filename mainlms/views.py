@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
-from django.db.models import Q
+from django.db.models import Q, Subquery, OuterRef
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import generics
@@ -355,7 +355,37 @@ def fetch_quiz_assign_status(request, quiz_id, course_id):
 class AttemptQuizList(generics.ListCreateAPIView):
     queryset=AttemptQuiz.objects.all()
     serializer_class = AttemptQuizSerializer
-    
+    #In the updated code, we first filter the AttemptQuiz objects based on the quiz_id 
+    # and use OuterRef to reference the student_id of each attempt.
+    # Then, we order the attempts by the created_at field in descending order 
+    # and limit the result to only the latest attempt for each student using [:1].
+    #Finally, we filter the AttemptQuiz queryset again using Subquery to include 
+    # only the attempts that have their id in the subquery result.
+    #By using this approach, you will get a list of the latest attempts 
+    # for each student who has completed the quiz, avoiding the duplication issue you encountered before.
+    def get_queryset(self):
+        if 'quiz_id' in self.kwargs:
+            quiz_id=self.kwargs['quiz_id']
+            quiz=Quiz.objects.get(pk=quiz_id)
+            #return AttemptQuiz.objects.raw(f'SELECT  * FROM mainlms_attemptquiz WHERE quiz_id={int(quiz_id)} GROUP by student_id')
+            #return AttemptQuiz.objects.filter(quiz=quiz)
+            latest_attempts = AttemptQuiz.objects.filter(
+                quiz_id=quiz_id,
+                student_id=OuterRef('student_id')
+            ).order_by('-add_time')[:1]
+            
+            return AttemptQuiz.objects.filter(
+                id__in=Subquery(latest_attempts.values('id'))
+            )
+       
+        
+def fetch_quiz_attempt_count(request, quiz_id, student_id):
+    quiz=Quiz.objects.filter(id=quiz_id).first()
+    student=Student.objects.filter(id=student_id).first()
+    total_questions=QuizQuestions.objects.filter(quiz=quiz).count()
+    total_attempted_questions=AttemptQuiz.objects.filter(quiz=quiz, student=student).values('student').count()
+    return JsonResponse({'total_questions':total_questions, 'total_attempted_questions':total_attempted_questions})
+        
 def fetch_quiz_attempt_status(request, quiz_id, student_id):
     quiz=Quiz.objects.filter(id=quiz_id).first()
     student=Student.objects.filter(id=student_id).first()

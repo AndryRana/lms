@@ -15,6 +15,7 @@ import ProfileSetting from './User/ProfileSetting';
 import ChangePassword from './User/ChangePassword';
 import MyCourses from './User/MyCourses';
 import StudentAssignments from './User/StudentAssignments';
+import UserStudyMaterials from './User/UserStudyMaterials';
 
 // Teachers
 import TeacherDashboard from './Teacher/TeacherDashboard';
@@ -41,6 +42,7 @@ import EditQuiz from './Teacher/EditQuiz';
 import QuizQuestions from './Teacher/QuizQuestions';
 import AddQuizQuestion from './Teacher/AddQuizQuestion';
 import AssignQuiz from './Teacher/AssignQuiz';
+import AttemptedStudents from './Teacher/AttemptedStudents';
 
 // Course Study Materials
 import StudyMaterials from './Teacher/StudyMaterials';
@@ -99,11 +101,13 @@ function Main(){
             <Route path="/all-questions/:quiz_id" element={<QuizQuestions />}/>
             <Route path="/add-quiz-question/:quiz_id" element={<AddQuizQuestion />}/>
             <Route path="/assign-quiz/:course_id" element={<AssignQuiz />}/>
+            <Route path="/attempted-students/:quiz_id" element={<AttemptedStudents />}/>
             
             <Route path="/course-quiz/:course_id" element={<CourseQuizList />}/>
             <Route path="/take-quiz/:quiz_id" element={<TakeQuiz />}/>
             
             <Route path="/study-material/:course_id" element={<StudyMaterials />}/>
+            <Route path="/user/study-material/:course_id" element={<UserStudyMaterials />}/>
             <Route path="/add-study/:course_id" element={<AddStudyMaterial />}/>
 
             <Route path="/teacher-profile-setting" element={<TeacherProfileSetting />}/>

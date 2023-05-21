@@ -15,10 +15,24 @@ class NotificationAdmin(admin.ModelAdmin):
     list_display= ['id', 'notif_subject','notif_for', 'notif_read_status']
 admin.site.register(models.Notification,NotificationAdmin)
 
-admin.site.register(models.Quiz)
-admin.site.register(models.QuizQuestions)
-admin.site.register(models.CourseQuiz)
-admin.site.register(models.AttemptQuiz)
+class QuizAdmin(admin.ModelAdmin):
+    list_display= ['id', 'teacher','title', 'detail']
+admin.site.register(models.Quiz,QuizAdmin )
+
+
+class QuizQuestionsAdmin(admin.ModelAdmin):
+    list_display= ['id', 'quiz','questions']
+admin.site.register(models.QuizQuestions, QuizQuestionsAdmin)
+
+
+class CourseQuizAdmin(admin.ModelAdmin):
+    list_display= ['id', 'teacher','course', 'quiz']
+admin.site.register(models.CourseQuiz, CourseQuizAdmin)
+
+
+class AttemptQuizAdmin(admin.ModelAdmin):
+    list_display= ['id', 'student', 'quiz', 'question']
+admin.site.register(models.AttemptQuiz, AttemptQuizAdmin)
 
 class StudyMaterialAdmin(admin.ModelAdmin):
     list_display= ['id', 'course','title', 'description']
