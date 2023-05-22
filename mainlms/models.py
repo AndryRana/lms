@@ -1,6 +1,7 @@
 from django.db import models
 from django.core import serializers
 
+
 # Teacher Model
 class Teacher(models.Model):
     full_name = models.CharField(max_length=100)
@@ -10,6 +11,8 @@ class Teacher(models.Model):
     mobile_no = models.CharField(max_length=20)
     profile_img = models.ImageField(upload_to="teacher_profile_imgs/", null=True)
     skills = models.TextField()
+    verify_status=models.BooleanField(default=False)
+    otp_digit=models.CharField(max_length=10,null=True)
 
     class Meta:
         verbose_name_plural = "1. Teachers"
@@ -33,6 +36,7 @@ class Teacher(models.Model):
         total_students=StudentCourseEnrollment.objects.filter(course__teacher=self).count()
         return total_students
     
+    
 # Course Category Model
 class CourseCategory(models.Model):
     title = models.CharField(max_length=150)
@@ -40,6 +44,10 @@ class CourseCategory(models.Model):
 
     class Meta:
         verbose_name_plural = "2. Course Categories"
+        
+    #total courses of this category
+    def total_courses(self):
+        return Course.objects.filter(category=self).count()
 
     def __str__(self):
         return self.title
@@ -47,12 +55,13 @@ class CourseCategory(models.Model):
 
 # Course Model
 class Course(models.Model):
-    category = models.ForeignKey(CourseCategory, on_delete=models.CASCADE)
+    category = models.ForeignKey(CourseCategory, on_delete=models.CASCADE, related_name='category_courses')
     teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE, related_name='teacher_courses')
     title = models.CharField(max_length=150)
     description = models.TextField(null=True)
     feature_img = models.ImageField(upload_to="course_imgs/", null=True)
     techs = models.TextField(null=True)
+    course_views=models.BigIntegerField(default=0)
 
     class Meta:
         verbose_name_plural = "3. Courses"
@@ -96,6 +105,8 @@ class Student(models.Model):
     username = models.CharField(max_length=200)
     interested_categories = models.TextField()
     profile_img = models.ImageField(upload_to="student_profile_imgs/", null=True)
+    verify_status=models.BooleanField(default=False)
+    otp_digit=models.CharField(max_length=10,null=True)
 
     def __str__(self):
         return self.full_name

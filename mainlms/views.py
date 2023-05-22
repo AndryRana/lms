@@ -3,6 +3,7 @@ from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.db.models import Q, Subquery, OuterRef
 from rest_framework.views import APIView
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework import generics
 from rest_framework import permissions
@@ -15,9 +16,22 @@ from .models import Teacher, CourseCategory, Course, Chapter, Student, StudentCo
 #         serializer = TeacherSerializer(teachers, many=True)
 #         return Response(serializer.data)
 
+
+class StandardResultsSetPagination(PageNumberPagination):
+    page_size = 4
+    page_size_query_param = 'page_size'
+    max_page_size = 4
+
+
 class TeacherList(generics.ListCreateAPIView):
     queryset=Teacher.objects.all()
     serializer_class = TeacherSerializer
+    
+    def get_queryset(self):
+        if 'popular' in self.request.GET:
+            sql="SELECT t.*,COUNT(c.id) as total_course  FROM mainlms_teacher as t INNER JOIN mainlms_course as c ON c.teacher_id=t.id GROUP BY t.id,t.full_name ORDER BY total_course DESC"
+            return Teacher.objects.raw(sql)
+    
     
 class TeacherDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset=Teacher.objects.all()
@@ -36,18 +50,37 @@ def teacher_login(request):
     except Teacher.DoesNotExist:
         teacherData=None
     if teacherData:
-        return JsonResponse({'bool':True,'teacher_id':teacherData.id})
+        if not teacherData.verify_status:
+            return JsonResponse({'bool':False, 'msg': 'Account is not verified!!'})
+        else:
+            return JsonResponse({'bool':True,'teacher_id':teacherData.id})
+    else:
+        return JsonResponse({'bool':False,'msg': 'Invalid email or Password!!'})
+    
+@csrf_exempt    
+def verify_teacher_via_otp(request,teacher_id):
+    otp_digit=request.POST.get('otp_digit')
+    verify=Teacher.objects.filter(id=teacher_id, otp_digit=otp_digit).first()
+    if verify:
+        Teacher.objects.filter(id=teacher_id, otp_digit=otp_digit).update(verify_status=True)
+        return JsonResponse({'bool':True, 'teacher_id':verify.id})
     else:
         return JsonResponse({'bool':False})
-    
+        
+
 class CategoryList(generics.ListCreateAPIView):
     queryset=CourseCategory.objects.all()
     serializer_class = CategorySerializer
+    
+
+
+
 
 #Course
 class CourseList(generics.ListCreateAPIView):
     queryset=Course.objects.all()
     serializer_class = CourseSerializer
+    pagination_class = StandardResultsSetPagination
     
     def get_queryset(self):
         qs=super().get_queryset()
@@ -57,7 +90,8 @@ class CourseList(generics.ListCreateAPIView):
             
         if 'category' in self.request.GET:
             category=self.request.GET['category']
-            qs=Course.objects.filter(techs__icontains=category)
+            category=CourseCategory.objects.filter(id=category).first()
+            qs=Course.objects.filter(category=category)
             
         if 'skill_name' in self.request.GET and 'teacher' in self.request.GET:
             skill_name=self.request.GET['skill_name']
@@ -224,6 +258,15 @@ class CourseRatingList(generics.ListCreateAPIView):
     queryset=CourseRating.objects.all()
     serializer_class = CourseRatingSerializer
     
+    def get_queryset(self):
+        if 'popular' in self.request.GET:
+            sql="SELECT cr.*,c.*  FROM mainlms_courserating as cr INNER JOIN mainlms_course as c ON cr.course_id=c.id GROUP BY cr.id, cr.rating, cr.course_id, c.id, c.title ORDER BY AVG(cr.rating) desc LIMIT 4"
+            return CourseRating.objects.raw(sql)
+        if 'all' in self.request.GET:
+            sql="SELECT cr.*,c.* FROM mainlms_courserating as cr INNER JOIN mainlms_course as c ON cr.course_id=c.id GROUP BY cr.id, cr.rating, cr.course_id, c.id, c.title ORDER BY AVG(cr.rating) desc"
+            return CourseRating.objects.raw(sql)
+        return CourseRating.objects.filter(course__isnull=False).order_by('-rating')
+    
 def fetch_rating_status(request, student_id, course_id):
     student=Student.objects.filter(id=student_id).first()
     course=Course.objects.filter(id=course_id).first()
@@ -379,12 +422,19 @@ class AttemptQuizList(generics.ListCreateAPIView):
             )
        
         
-def fetch_quiz_attempt_count(request, quiz_id, student_id):
+def fetch_quiz_result(request, quiz_id, student_id):
     quiz=Quiz.objects.filter(id=quiz_id).first()
     student=Student.objects.filter(id=student_id).first()
     total_questions=QuizQuestions.objects.filter(quiz=quiz).count()
     total_attempted_questions=AttemptQuiz.objects.filter(quiz=quiz, student=student).values('student').count()
-    return JsonResponse({'total_questions':total_questions, 'total_attempted_questions':total_attempted_questions})
+    attempted_questions=AttemptQuiz.objects.filter(quiz=quiz, student=student)
+    
+    total_correct_ans=0
+    for attempt in attempted_questions:
+        if attempt.right_ans == attempt.question.right_ans:
+            total_correct_ans+=1
+    return JsonResponse({'total_questions':total_questions,'total_attempted_questions':total_attempted_questions, 'total_correct_ans':total_correct_ans})
+        
         
 def fetch_quiz_attempt_status(request, quiz_id, student_id):
     quiz=Quiz.objects.filter(id=quiz_id).first()
@@ -395,6 +445,7 @@ def fetch_quiz_attempt_status(request, quiz_id, student_id):
         return JsonResponse({'bool':True})
     else:
         return JsonResponse({'bool':False})
+    
     
     
 class StudyMaterialList(generics.ListCreateAPIView):
@@ -408,3 +459,9 @@ class StudyMaterialList(generics.ListCreateAPIView):
 class StudyMaterialDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = StudyMaterial.objects.all()
     serializer_class= StudyMaterialSerializer
+    
+def update_view(request,course_id):
+    queryset=Course.objects.filter(pk=course_id).first()
+    queryset.course_views+=1
+    queryset.save()
+    return JsonResponse({'views':queryset.course_views})

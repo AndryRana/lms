@@ -52,6 +52,11 @@ function Header() {
                                     Courses
                                 </Link>
                             </li>
+                            <li className="nav-item">
+                                <Link className="nav-link active" aria-current="page" to="/category">
+                                    Categories
+                                </Link>
+                            </li>
                             <li className="nav-item dropdown">
                                 <Link className="nav-link dropdown-toggle" to="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                     Teacher

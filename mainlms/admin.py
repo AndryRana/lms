@@ -1,7 +1,9 @@
 from django.contrib import admin
 from . import models
 
-admin.site.register(models.Teacher)
+class TeacherAdmin(admin.ModelAdmin):
+    list_display= ['id', 'full_name','email', 'skills','verify_status', 'otp_digit']
+admin.site.register(models.Teacher,TeacherAdmin)
 admin.site.register(models.CourseCategory)
 admin.site.register(models.Course)
 admin.site.register(models.Chapter)

@@ -1,10 +1,11 @@
 from rest_framework import serializers
+from django.core.mail import send_mail
 from .models import Teacher, CourseCategory, Course, Chapter, Student, StudentCourseEnrollment, CourseRating, StudentFavoriteCourse, StudentAssignment, Notification, Quiz, QuizQuestions,CourseQuiz, AttemptQuiz, StudyMaterial
 
 class TeacherSerializer(serializers.ModelSerializer):
     class Meta:
         model=Teacher
-        fields=['id', 'full_name', 'email','password','qualification','mobile_no','profile_img','skills', 'teacher_courses', 'skill_list']
+        fields=['id', 'full_name', 'email','password','qualification','mobile_no','profile_img','skills','otp_digit','teacher_courses', 'skill_list', 'total_teacher_courses']
     
     def __init__(self, *args, **kwargs):
         super(TeacherSerializer, self).__init__(*args, **kwargs)
@@ -13,6 +14,20 @@ class TeacherSerializer(serializers.ModelSerializer):
         if request and request.method == 'GET':
             self.Meta.depth = 2
 
+    def create(self,validate_data):
+        email=self.validated_data['email']
+        otp_digit=self.validated_data['otp_digit']
+        instance= super(TeacherSerializer,self).create(validate_data)
+        send_mail(
+            'Verify Account',
+            'Please verify your account',
+            'ranamiran75@gmail.com',
+            [email],
+            fail_silently=False,
+            html_message=f'<p>Your OTP is</p><p>{otp_digit}</p>'
+            )
+        return instance
+    
 class TeacherDashboardSerializer(serializers.ModelSerializer):
     class Meta:
         model=Teacher
@@ -21,12 +36,12 @@ class TeacherDashboardSerializer(serializers.ModelSerializer):
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model=CourseCategory
-        fields=['id', 'title', 'description']
+        fields=['id', 'title', 'description','total_courses']
 
 class CourseSerializer(serializers.ModelSerializer):
     class Meta:
         model=Course
-        fields=['id','category', 'teacher', 'title', 'description','feature_img', 'techs', 'course_chapters', 'related_videos','tech_list','total_enrolled_students','course_rating']
+        fields=['id','category', 'teacher', 'title', 'description','feature_img', 'techs', 'course_views', 'course_chapters', 'related_videos','tech_list','total_enrolled_students','course_rating']
     
     def __init__(self, *args, **kwargs):
         super(CourseSerializer, self).__init__(*args, **kwargs)

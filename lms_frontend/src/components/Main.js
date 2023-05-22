@@ -20,6 +20,7 @@ import UserStudyMaterials from './User/UserStudyMaterials';
 // Teachers
 import TeacherDashboard from './Teacher/TeacherDashboard';
 import TeacherLogin from './Teacher/TeacherLogin';
+import VerifyTeacher from './Teacher/VerifyTeacher';
 import TeacherLogout from './Teacher/TeacherLogout';
 import TeacherRegister from './Teacher/TeacherRegister';
 import TeacherCourses from './Teacher/TeacherCourses';
@@ -57,6 +58,7 @@ import AllCourses from './AllCourses';
 import PopularCourses from './PopularCourses';
 import PopularTeachers from './PopularTeachers';
 import CategoryCourses from './CategoryCourses';
+import Category from './Category';
 import TeacherSkillCourses from './TeacherSkillCourses';
 
 import About from './About';
@@ -85,6 +87,7 @@ function Main(){
             <Route path="/teacher-login" element={<TeacherLogin />}/>
             <Route path="/teacher-logout" element={<TeacherLogout />}/>
             <Route path="/teacher-register" element={<TeacherRegister />}/>
+            <Route path="/verify-teacher/:teacher_id" element={<VerifyTeacher />}/>
             <Route path="/teacher-dashboard" element={<TeacherDashboard />}/>
             <Route path="/teacher-courses" element={<TeacherCourses />}/>
             <Route path="/enrolled-students/:course_id" element={<EnrolledStudents />}/>
@@ -119,7 +122,8 @@ function Main(){
             <Route path="/edit-chapter/:chapter_id" element={<EditChapter />}/>
             <Route path="/popular-courses" element={<PopularCourses />}/>
             <Route path="/popular-teachers" element={<PopularTeachers />}/>
-            <Route path="/category/:category_slug" element={<CategoryCourses />}/>
+            <Route path="/course/:category_id/:category_slug" element={<CategoryCourses />}/>
+            <Route path="/category" element={<Category />}/>
             <Route path="/teacher-skill-courses/:skill_name/:teacher_id" element={<TeacherSkillCourses />}/>
         </Switch>
         <Footer />
