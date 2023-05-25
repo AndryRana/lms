@@ -3,12 +3,14 @@ from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.db.models import Q, Subquery, OuterRef
 from rest_framework.views import APIView
+from django.core.mail import send_mail
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework import generics
 from rest_framework import permissions
 from .serializers import TeacherSerializer, CategorySerializer, CourseSerializer, ChapterSerializer, StudentSerializer, StudentCourseEnrollSerializer, CourseRatingSerializer, TeacherDashboardSerializer, StudentFavoriteCourseSerializer, StudentAssignmentSerializer, StudentDashboardSerializer, NotificationSerializer,QuizSerializer, QuestionSerializer, CourseQuizSerializer, AttemptQuizSerializer, StudyMaterialSerializer
 from .models import Teacher, CourseCategory, Course, Chapter, Student, StudentCourseEnrollment, CourseRating, StudentFavoriteCourse, StudentAssignment, Notification, Quiz, QuizQuestions, CourseQuiz, AttemptQuiz, StudyMaterial
+from random import randint
 
 # class TeacherList(APIView):
 #     def get(self, request):
@@ -53,6 +55,23 @@ def teacher_login(request):
         if not teacherData.verify_status:
             return JsonResponse({'bool':False, 'msg': 'Account is not verified!!'})
         else:
+            if teacherData.login_via_otp:
+                #send OTP email
+                otp_digit=randint(100000,999999)
+                send_mail(
+                    'Verify Account',
+                    'Please verify your account',
+                    'ranamiran75@gmail.com',
+                    [teacherData.email],
+                    fail_silently=False,
+                    html_message=f'<p>Your OTP is</p><p>{otp_digit}</p>'
+                )
+                teacherData.otp_digit=otp_digit
+                teacherData.save()
+                return JsonResponse({'bool':True,'teacher_id':teacherData.id, 'login_via_otp': True})
+            else:
+                return JsonResponse({'bool':True,'teacher_id':teacherData.id, 'login_via_otp': False})
+                    
             return JsonResponse({'bool':True,'teacher_id':teacherData.id})
     else:
         return JsonResponse({'bool':False,'msg': 'Invalid email or Password!!'})
@@ -65,7 +84,7 @@ def verify_teacher_via_otp(request,teacher_id):
         Teacher.objects.filter(id=teacher_id, otp_digit=otp_digit).update(verify_status=True)
         return JsonResponse({'bool':True, 'teacher_id':verify.id})
     else:
-        return JsonResponse({'bool':False})
+        return JsonResponse({'bool':False,'msg':'Please enter valid 6 digit OTP'})
         
 
 class CategoryList(generics.ListCreateAPIView):
@@ -179,10 +198,40 @@ def student_login(request):
     except Student.DoesNotExist:
         studentData=None
     if studentData:
-        return JsonResponse({'bool':True,'student_id':studentData.id})
+        if not studentData.verify_status:
+            return JsonResponse({'bool':False, 'msg': 'Account is not verified!!'})
+        else:   
+            if studentData.login_via_otp:
+                #send OTP email
+                otp_digit=randint(100000,999999)
+                send_mail(
+                    'Verify Account',
+                    'Please verify your account',
+                    'ranamiran75@gmail.com',
+                    [studentData.email],
+                    fail_silently=False,
+                    html_message=f'<p>Your OTP is</p><p>{otp_digit}</p>'
+                )
+                studentData.otp_digit=otp_digit
+                studentData.save()
+                return JsonResponse({'bool':True,'student_id':studentData.id, 'login_via_otp': True})
+            else:
+                return JsonResponse({'bool':True,'student_id':studentData.id, 'login_via_otp': False})
+                    
+            return JsonResponse({'bool':True,'student_id':studentData.id})
+    else:
+        return JsonResponse({'bool':False,'msg': 'Invalid email or Password!!'})
+ 
+@csrf_exempt    
+def verify_student_via_otp(request,student_id):
+    otp_digit=request.POST.get('otp_digit')
+    verify=Student.objects.filter(id=student_id, otp_digit=otp_digit).first()
+    if verify:
+        Student.objects.filter(id=student_id, otp_digit=otp_digit).update(verify_status=True)
+        return JsonResponse({'bool':True, 'student_id':verify.id})
     else:
         return JsonResponse({'bool':False})
-    
+           
 
 class StudentEnrollCourseList(generics.ListCreateAPIView):
     queryset=StudentCourseEnrollment.objects.all()
@@ -465,3 +514,65 @@ def update_view(request,course_id):
     queryset.course_views+=1
     queryset.save()
     return JsonResponse({'views':queryset.course_views})
+
+@csrf_exempt
+def teacher_forgot_password(request):
+    email=request.POST.get('email')
+    verify=Teacher.objects.filter(email=email).first()
+    if verify:
+        otp_digit=randint(100000,999999)
+        link=f"http://localhost:3000/teacher-change-password/{verify.id}/"
+        #send OTP email
+        send_mail(
+            'Verify Account',
+            'Please verify your account',
+            'ranamiran75@gmail.com',
+            [verify.email],
+            fail_silently=False,
+            html_message=f'<p>Your Link is</p><p>{link}</p>'
+        )
+        Teacher.objects.filter(email=email).update(otp_digit=otp_digit)
+        return JsonResponse({'bool':True, 'msg':'Please check your email!'})
+    else:
+        return JsonResponse({'bool':False,'msg':'Invalid email!'})
+
+@csrf_exempt
+def teacher_change_forgot_password(request,teacher_id):
+    password=request.POST.get('password')
+    verify=Teacher.objects.filter(id=teacher_id).first()
+    if verify:
+        Teacher.objects.filter(id=teacher_id).update(password=password)
+        return JsonResponse({'bool':True, 'msg':'Password has been changed!'})
+    else:
+        return JsonResponse({'bool':False,'msg':'Oops... Some error occured!'})
+
+@csrf_exempt
+def user_forgot_password(request):
+    email=request.POST.get('email')
+    verify=Student.objects.filter(email=email).first()
+    if verify:
+        otp_digit=randint(100000,999999)
+        link=f"http://localhost:3000/user-change-password/{verify.id}/"
+        #send OTP email
+        send_mail(
+            'Verify Account',
+            'Please verify your account',
+            'ranamiran75@gmail.com',
+            [verify.email],
+            fail_silently=False,
+            html_message=f'<p>Your Link is</p><p>{link}</p>'
+        )
+        Teacher.objects.filter(email=email).update(otp_digit=otp_digit)
+        return JsonResponse({'bool':True, 'msg':'Please check your email!'})
+    else:
+        return JsonResponse({'bool':False,'msg':'Invalid email!'})
+
+@csrf_exempt
+def user_change_forgot_password(request,student_id):
+    password=request.POST.get('password')
+    verify=Student.objects.filter(id=student_id).first()
+    if verify:
+        Student.objects.filter(id=student_id).update(password=password)
+        return JsonResponse({'bool':True, 'msg':'Password has been changed!'})
+    else:
+        return JsonResponse({'bool':False,'msg':'Oops... Some error occured!'})

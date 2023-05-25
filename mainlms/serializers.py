@@ -5,7 +5,7 @@ from .models import Teacher, CourseCategory, Course, Chapter, Student, StudentCo
 class TeacherSerializer(serializers.ModelSerializer):
     class Meta:
         model=Teacher
-        fields=['id', 'full_name', 'email','password','qualification','mobile_no','profile_img','skills','otp_digit','teacher_courses', 'skill_list', 'total_teacher_courses']
+        fields=['id', 'full_name', 'email','password','qualification','mobile_no','profile_img','skills','otp_digit','login_via_otp','teacher_courses', 'skill_list', 'total_teacher_courses']
     
     def __init__(self, *args, **kwargs):
         super(TeacherSerializer, self).__init__(*args, **kwargs)
@@ -65,7 +65,21 @@ class ChapterSerializer(serializers.ModelSerializer):
 class StudentSerializer(serializers.ModelSerializer):
     class Meta:
         model=Student
-        fields=['id', 'full_name', 'email','password','username','interested_categories', 'profile_img']
+        fields=['id', 'full_name', 'email','password','username','interested_categories','otp_digit','login_via_otp', 'profile_img']
+    
+    def create(self,validate_data):
+        email=self.validated_data['email']
+        otp_digit=self.validated_data['otp_digit']
+        instance= super(StudentSerializer,self).create(validate_data)
+        send_mail(
+            'Verify Account',
+            'Please verify your account',
+            'ranamiran75@gmail.com',
+            [email],
+            fail_silently=False,
+            html_message=f'<p>Your OTP is</p><p>{otp_digit}</p>'
+            )
+        return instance
     
     def __init__(self, *args, **kwargs):
         super(StudentSerializer, self).__init__(*args, **kwargs)

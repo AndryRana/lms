@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import {Link,useNavigate} from 'react-router-dom';
 const baseUrl='http://127.0.0.1:8000/api';
 function Login(){
+    const navigate=useNavigate();
     useEffect(() => {
         document.title='Student Login';
     });
@@ -28,11 +30,16 @@ function Login(){
             axios.post(`${baseUrl}/student-login`, studentFormData)
             .then((response) => {
                 if(response.data.bool===true) {
-                    localStorage.setItem('studentLoginStatus', true);
-                    localStorage.setItem('studentId', response.data.student_id);
-                    window.location.href='/user-dashboard';
+                    if(response.data.bool===true) {
+                        navigate('/verify-student/'+response.data.student_id);
+                    }else{
+                        localStorage.setItem('studentLoginStatus', true);
+                        localStorage.setItem('studentId', response.data.student_id);
+                        navigate('/user-dashboard');
+                        // window.location.href='/student-dashboard';
+                    }
                 }else{
-                    seterrorMsg('Invalid Email or Password!');
+                    seterrorMsg(response.data.msg);
                 }
             });
         } catch (error) {
@@ -66,6 +73,7 @@ function Login(){
                                 <label className="form-check-label" for="exampleCheck1">Remember Me</label>
                             </div>*/}
                             <button type="submit" onClick={submitForm} className="btn btn-primary">Login</button>
+                            <p className="mt-3"><Link to="/user-forgot-password" className="text-danger mt-3">Forgot Password</Link></p>
                         </div>
                     </div>
                 </div>

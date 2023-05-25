@@ -15,7 +15,9 @@ function TeacherProfileSetting(){
         'skills':'',
         'profile_img':'',
         'p_img':'',
-        'status':''
+        'status':'',
+        'login_via_otp': ''
+
     });
     const teacherId =localStorage.getItem('teacherId');
     useEffect(()=>{
@@ -30,7 +32,8 @@ function TeacherProfileSetting(){
                     mobile_no:res.data.mobile_no,
                     skills:res.data.skills,
                     profile_img:res.data.profile_img,
-                    p_img:''
+                    p_img:'',
+                    login_via_otp:res.data.login_via_otp
                 });
             });
         } catch (error) {
@@ -62,6 +65,7 @@ function TeacherProfileSetting(){
         teacherFormData.append("qualification", teacherData.qualification);
         teacherFormData.append("mobile_no", teacherData.mobile_no);
         teacherFormData.append("skills", teacherData.skills);
+        teacherFormData.append("login_via_otp", teacherData.login_via_otp);
         if(teacherData.p_img!=='') {
             teacherFormData.append('profile_img', teacherData.p_img,teacherData.p_img.name);
         }
@@ -126,6 +130,10 @@ function TeacherProfileSetting(){
                         <label htmlFor="exampleInputEmail1" className="form-label">Qualification</label>
                         <textarea value={teacherData.qualification} onChange={handleChange} name="qualification" className="form-control">  </textarea>
                         <div className="form-text">BCA | MCA</div>
+                    </div>
+                    <div className="mb-3">
+                        <label htmlFor="exampleInputEmail1" className="form-label">Login via OTP</label>
+                        <input value={teacherData.login_via_otp} onChange={handleChange} name="login_via_otp" type="text" className="form-control" />
                     </div>
                     <div className="mb-3">
                         <label htmlFor="exampleInputPassword1" className="form-label">Skills</label>

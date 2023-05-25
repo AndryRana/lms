@@ -6,6 +6,9 @@ import TeacherDetail from './TeacherDetail';
 
 //  Users
 import Login from './User/Login';
+import UserForgotPassword from './User/UserForgotPassword';
+import UserForgotChangePassword from './User/UserForgotChangePassword';
+import VerifyStudent from './User/VerifyStudent';
 import Logout from './User/StudentLogout';
 import Register from './User/Register';
 import Dashboard from './User/Dashboard';
@@ -20,6 +23,8 @@ import UserStudyMaterials from './User/UserStudyMaterials';
 // Teachers
 import TeacherDashboard from './Teacher/TeacherDashboard';
 import TeacherLogin from './Teacher/TeacherLogin';
+import ForgotPassword from './Teacher/ForgotPassword';
+import ForgotChangePassword from './Teacher/ForgotChangePassword';
 import VerifyTeacher from './Teacher/VerifyTeacher';
 import TeacherLogout from './Teacher/TeacherLogout';
 import TeacherRegister from './Teacher/TeacherRegister';
@@ -78,6 +83,7 @@ function Main(){
             <Route path="/user-login" element={<Login />}/>
             <Route path="/user-logout" element={<Logout />}/>
             <Route path="/user-register" element={<Register />}/>
+            <Route path="/verify-student/:student_id" element={<VerifyStudent />}/>
             <Route path="/user-dashboard" element={<Dashboard />}/>
             <Route path="/my-courses" element={<MyCourses />}/>
             <Route path="/favorite-courses" element={<FavoriteCourses />}/>
@@ -85,6 +91,10 @@ function Main(){
             <Route path="/profile-setting" element={<ProfileSetting />}/>
             <Route path="/change-password" element={<ChangePassword />}/>
             <Route path="/teacher-login" element={<TeacherLogin />}/>
+            <Route path="/teacher-forgot-password" element={<ForgotPassword />}/>
+            <Route path="/teacher-change-password/:teacher_id" element={<ForgotChangePassword />}/>
+            <Route path="/user-forgot-password" element={<UserForgotPassword />}/>
+            <Route path="/user-change-password/:student_id" element={<UserForgotChangePassword />}/>
             <Route path="/teacher-logout" element={<TeacherLogout />}/>
             <Route path="/teacher-register" element={<TeacherRegister />}/>
             <Route path="/verify-teacher/:teacher_id" element={<VerifyTeacher />}/>

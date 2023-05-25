@@ -1,0 +1,71 @@
+import { useEffect, useState } from "react";
+import axios from "axios";
+import {Link,useNavigate} from 'react-router-dom';
+const baseUrl='http://127.0.0.1:8000/api';
+function ForgotPassword(){
+    const navigate=useNavigate();
+    useEffect(() => {
+        document.title='Teacher - Forgot Password';
+    });
+    const [teacherData, setteacherData]=useState({
+        email:'',
+    });
+
+    const [successMsg,setsuccessMsg]=useState('');
+    const [errorMsg,seterrorMsg]=useState('');
+
+    const handleChange=(event) => {
+        setteacherData({
+            ...teacherData, 
+            [ event.target.name ]: event.target.value
+            
+        });
+    }
+
+    
+    const submitForm=()=>{
+        const teacherFormData=new FormData();
+        teacherFormData.append('email', teacherData.email)
+
+        try {
+            axios.post(`${baseUrl}/teacher-forgot-password/`, teacherFormData)
+            .then((response) => {
+                if(response.data.bool===true) {
+                    setsuccessMsg(response.data.msg);
+                    seterrorMsg('');
+                }else{
+                    seterrorMsg(response.data.msg);
+                }
+            });
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    const teacherLoginStatus =localStorage.getItem('teacherLoginStatus')
+    if(teacherLoginStatus==='true') {
+        window.location.href='/teacher-dashboard'
+    }
+    return (
+        <div className="container mt-4">
+            <div className="row">
+                <div className="col-6 offset-3">
+                    <div className="card">
+                        <h5 className="card-header">Enter your email</h5>
+                        <div className="card-body">
+                            {successMsg && <p className="text-danger">{successMsg}</p>}
+                            {errorMsg && <p className="text-danger">{errorMsg}</p>}
+                            <div className="mb-3">
+                                <label htmlFor="exampleInputEmail1" className="form-label">email</label>
+                                <input value={teacherData.email} name="email" onChange={handleChange} type="email" className="form-control" />
+                            </div>
+                            <button type="submit" onClick={submitForm} className="btn btn-primary">Send</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+}
+
+export default ForgotPassword;

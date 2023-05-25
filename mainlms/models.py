@@ -13,6 +13,7 @@ class Teacher(models.Model):
     skills = models.TextField()
     verify_status=models.BooleanField(default=False)
     otp_digit=models.CharField(max_length=10,null=True)
+    login_via_otp=models.BooleanField(default=False)
 
     class Meta:
         verbose_name_plural = "1. Teachers"
@@ -107,6 +108,8 @@ class Student(models.Model):
     profile_img = models.ImageField(upload_to="student_profile_imgs/", null=True)
     verify_status=models.BooleanField(default=False)
     otp_digit=models.CharField(max_length=10,null=True)
+    login_via_otp=models.BooleanField(default=False)
+
 
     def __str__(self):
         return self.full_name

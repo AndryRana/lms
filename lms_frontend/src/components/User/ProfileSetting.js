@@ -14,6 +14,7 @@ function ProfileSetting(){
         'interested_categories':'',
         'profile_img':'',
         'p_img':'',
+        'login_via_otp':''
     });
     const studentId =localStorage.getItem('studentId');
     useEffect(()=>{
@@ -27,7 +28,8 @@ function ProfileSetting(){
                     username:res.data.username,
                     interested_categories:res.data.interested_categories,
                     profile_img:res.data.profile_img,
-                    p_img:''
+                    p_img:'',
+                    login_via_otp:res.data.login_via_otp
                 });
             });
         } catch (error) {
@@ -58,6 +60,7 @@ function ProfileSetting(){
         studentFormData.append("email", studentData.email);
         studentFormData.append("username", studentData.username);
         studentFormData.append("interested_categories", studentData.interested_categories);
+        studentFormData.append("login_via_otp", studentData.login_via_otp);
         if(studentData.p_img!=='') {
             studentFormData.append('profile_img', studentData.p_img,studentData.p_img.name);
         }
@@ -126,6 +129,10 @@ function ProfileSetting(){
                         <label htmlFor="exampleInputPassword1" className="form-label">Interested categories</label>
                         <textarea value={studentData.interested_categories} onChange={handleChange} name="interested_categories" className= "form-control"></textarea>
                         <div id="emailHelp" className="form-text">PHP, Python, JavaScript, etc</div>
+                    </div>
+                    <div className="mb-3">
+                        <label htmlFor="exampleInputEmail1" className="form-label">Login via OTP</label>
+                        <input value={studentData.login_via_otp} onChange={handleChange} name="login_via_otp" type="text" className="form-control" />
                     </div>
                     <button onClick={submitForm}  type="submit" className="btn btn-primary">Update</button>
                 </div>

@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import {useNavigate} from 'react-router-dom';
 const baseUrl='http://127.0.0.1:8000/api';
 function Register(){
+    const navigate=useNavigate();
     useEffect(() => {
         document.title='Student Register';
     });
@@ -11,7 +13,8 @@ function Register(){
         'password':'',
         'username':'',
         'interested_categories':'',
-        'status':''
+        'status':'',
+        'otp_digit':''
     });
 
     // Change element value
@@ -24,23 +27,26 @@ function Register(){
 
      // Submit Form
      const submitForm=()=>{
+        const otp_digit=Math.floor(100000+Math.random()*900000)
         const studentFormData=new FormData();
         studentFormData.append("full_name", studentData.full_name);
         studentFormData.append("email", studentData.email);
         studentFormData.append("password", studentData.password);
         studentFormData.append("username", studentData.username);
         studentFormData.append("interested_categories", studentData.interested_categories);
+        studentFormData.append("otp_digit", otp_digit);
         try {
             axios.post(`${baseUrl}/student/`, studentFormData).then((response)=>{
                 console.log(response.data);
-                setstudentData({
-                    'full_name':'',
-                    'email':'',
-                    'password':'',
-                    'username':'',
-                    'interested_categories':'',
-                    'status':'success'
-                });
+                navigate('/verify-student/'+response.data.id)
+                // setstudentData({
+                //     'full_name':'',
+                //     'email':'',
+                //     'password':'',
+                //     'username':'',
+                //     'interested_categories':'',
+                //     'status':'success'
+                // });
             });
         } catch(error) {
             console.log(error);

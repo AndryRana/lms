@@ -66,14 +66,14 @@ function Header() {
                                         <>
                                         <li><Link className="dropdown-item" to="/teacher-login">Login</Link></li>
                                         <li ><Link className="dropdown-item" to="/teacher-register">Register</Link></li>
+                                        
                                         </>
                                     }
-                                    
-                                    <li><Link className="dropdown-item" to="/teacher-dashboard">Dashbord</Link></li>
-                                    <li><Link className="dropdown-item" to="/teacher-logout">Logout</Link></li>
+                                        <li><Link className="dropdown-item" to="/teacher-dashboard">Dashbord</Link></li>
+                                        <li><Link className="dropdown-item" to="/teacher-logout">Logout</Link></li>
                                 
                                 </ul>
-                                </li>
+                            </li>
                             <li className="nav-item dropdown">
                                 <Link className="nav-link dropdown-toggle" to="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                     User

@@ -2,12 +2,16 @@ from django.contrib import admin
 from . import models
 
 class TeacherAdmin(admin.ModelAdmin):
-    list_display= ['id', 'full_name','email', 'skills','verify_status', 'otp_digit']
+    list_display= ['id', 'full_name','email', 'skills','verify_status', 'otp_digit','login_via_otp']
 admin.site.register(models.Teacher,TeacherAdmin)
 admin.site.register(models.CourseCategory)
 admin.site.register(models.Course)
 admin.site.register(models.Chapter)
-admin.site.register(models.Student)
+
+class StudentAdmin(admin.ModelAdmin):
+    list_display= ['id', 'full_name','email', 'username','interested_categories','verify_status', 'otp_digit','login_via_otp']
+admin.site.register(models.Student,StudentAdmin)
+
 admin.site.register(models.StudentCourseEnrollment)
 admin.site.register(models.CourseRating)
 admin.site.register(models.StudentFavoriteCourse)
